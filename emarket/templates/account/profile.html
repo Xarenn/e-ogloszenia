@@ -1,12 +1,16 @@
+{% extends 'base.html' %}
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
 <div class="container">
 
 </div>
-
+<div class="container">
+<h2>Your ads</h2>
 {% for ad in ads_list %}
     <p>{{ ad.title }}</p>
     <p>{{ ad.description }}</p>
 {% endfor %}
+</div>
 {% endblock %}

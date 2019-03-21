@@ -17,10 +17,14 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('success_register')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def success_signup(request):
+    return render(request, 'registration/register_success.html')
 
 
 def add_ad(request):
@@ -44,5 +48,15 @@ def ads_view(request):
     ads_list = paginator.get_page(page)
     context = {
         'ads_list': ads_list,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def your_ads(request):
+    username = request.user.username
+    template = loader.get_template('account/profile.html')
+    ads = Ad.objects.filter(user__username__contains = username)
+    context = {
+        'ads_list': ads
     }
     return HttpResponse(template.render(context, request))

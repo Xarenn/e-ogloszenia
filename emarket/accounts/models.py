@@ -7,6 +7,7 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
 class Ad(models.Model):
     title = models.TextField(max_length=255)
     description = models.TextField(max_length=9000)
