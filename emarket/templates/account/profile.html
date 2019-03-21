@@ -1,0 +1,12 @@
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+
+</div>
+
+{% for ad in ads_list %}
+    <p>{{ ad.title }}</p>
+    <p>{{ ad.description }}</p>
+{% endfor %}
+{% endblock %}

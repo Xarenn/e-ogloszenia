@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Your Password?{% endblock %}
+
+{% block content %}
+  <h1>Send Ad? Complete the form</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Send AD!">
+  </form>
+
+
+{% endblock %}
