@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.urls import path
 
 from . import views
@@ -5,8 +6,11 @@ from . import views
 
 urlpatterns = [
     path('accounts/signup/', views.signup, name='signup'),
-    path('accounts/add_ad/', views.add_ad, name='add_ad'),
-    path('accounts/profile', views.your_ads, name='your_ads'),
+    path('account/add_ad/', views.add_ad, name='add_ad'),
+    path('account/profile', views.profile, name='profile'),
+    path('account/ads', views.your_ads, name='your_ads'),
     path('', views.ads_view, name='home'),
-    path('success_register', views.success_signup, name='success_register')
+    path('search', views.search, name='search'),
+    path('success_register', views.success_signup, name='success_register'),
+    url(r'^ads/(?P<ad_id>\d+)$', views.ad_view, name='ad_view')
 ]

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+
+</div>
+<div class="container">
+<h2>Your ads</h2>
+{% for ad in ads_list %}
+    <div class="cont" style="background-color: goldenrod"><p>{{ ad.title }}</p><br>
+    {% load static %}
+    <img src="{% static 'min.png' %}" alt="Card image cap" style="max-width: 80px;">
+    <p>{{ ad.description }}</p>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

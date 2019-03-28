@@ -4,21 +4,41 @@
 
 {% block content %}
 <div class="container" style="margin-bottom: 50px; width: auto;">
-
-    {% for ad in ads_list %}
-    {% if forloop.first %}<div class="card-deck">{% endif %}
-        <div class="card" style="margin-top:30px;">
+    <hr>
+    <h2>Promoted</h2>
+        {% for ad in ads_list_promoted %}
+        {% if forloop.first %}<div class="card-deck" style="">{% endif %}
+        <div class="card" style="margin-top:30px; background-color: gold;">
           {% load static %}
-          <img class="card-img-top" src="{% static "min.png" %}" alt="Card image cap">
+          <img class="card-img-top" src="{% static 'min.png' %}" alt="Card image cap">
           <div class="card-body">
-            <h5 class="card-title">{{ ad.title }}</h5>
-            <p class="card-text">{{ ad.description }}</p>
+            <h5 class="card-title" style="text-length: 100;">{{ ad.title }}</h5>
+            <h7><p class="card-text">{{ ad.description }}</p></h7>
           </div>
            <div class="card-footer">
             <small class="text-muted">Last updated 3 mins ago</small>
            </div>
         </div>
     {% if forloop.counter|divisibleby:3 %}</div><div class="card-deck" style="">{% endif %}
+    {% if forloop.last %}</div>{% endif %}
+        {% endfor %}
+
+    <hr>
+    <h2>Classifieds</h2>
+    {% for ad in ads_list %}
+    {% if forloop.first %}<div class="card-deck">{% endif %}
+        <div class="card" style="margin-top:30px; max-width: 350px;">
+          {% load static %}
+          <img class="card-img-top" src="{% static 'min.png' %}" alt="Card image cap" style="">
+          <div class="card-body">
+              <h5 class="card-title"><a href="{% url 'ad_view' ad.id %}">{{ ad.title }}</a></h5>
+            <p class="card-text">{{ ad.description }}</p>
+          </div>
+           <div class="card-footer">
+            <small class="text-muted">Last updated 3 mins ago</small>
+           </div>
+        </div>
+    {% if forloop.counter|divisibleby:3 %}</div><div class="card-deck">{% endif %}
     {% if forloop.last %}</div>{% endif %}
 
     {% endfor %}

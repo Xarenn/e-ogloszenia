@@ -14,8 +14,8 @@ class SignUpForm(UserCreationForm):
 
 
 class AddAdForm(forms.Form):
-    title = forms.CharField(max_length=30, required=True)
-    description = forms.CharField(max_length=30, required=True)
+    title = forms.CharField(max_length=160, required=True)
+    description = forms.CharField(max_length=180, required=True)
 
     class Meta:
         model = Ad

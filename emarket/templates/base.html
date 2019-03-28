@@ -21,18 +21,10 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Ads</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
+        <form class="form-inline mr-auto" method="GET" action="{% url 'search' %}">
+          <input name="q" class="form-control" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" type="submit">Search</button>
+        </form>
         </ul>
     </div>
     <div class="mx-auto order-0">
@@ -47,8 +39,10 @@
           <li class="nav-item dropdown">
         <button class="btn btn-warning mr-sm-2 my-sm-2" type="button" data-toggle="dropdown">Account</button>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'your_ads' %}">Your Ads</a>
-          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+            <a class="dropdown-item" href="{% url 'your_ads' %}">Ads</a>
+            <a class="dropdown-item" href="{% url 'your_ads' %}">Messages</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
         </div>
       </li>
           {% else %}

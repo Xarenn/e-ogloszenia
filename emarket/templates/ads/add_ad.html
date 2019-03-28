@@ -3,13 +3,16 @@
 {% block title %}Forgot Your Password?{% endblock %}
 
 {% block content %}
-  <h1>Send Ad? Complete the form</h1>
-
+  {% if user.is_authenticated %}
   <form method="POST">
+    <h2>Send Ad? Complete the form</h2>
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Send AD!">
   </form>
+  {% else %}
+  <h2>Please login to add advertise!</h2>
+  {% endif %}
 
 
 {% endblock %}

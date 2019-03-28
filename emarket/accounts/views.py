@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
 
+from accounts.account_service import get_ads_by_username
 from .models import Ad
 from .forms import SignUpForm, AddAdForm
 
@@ -42,21 +44,50 @@ def add_ad(request):
 
 def ads_view(request):
     ads = Ad.objects.all()
+    ads_list_promoted = ads[:3]
     template = loader.get_template('home.html')
-    paginator = Paginator(ads, 6)
+    paginator = Paginator(ads, 9)
     page = request.GET.get('page')
     ads_list = paginator.get_page(page)
     context = {
         'ads_list': ads_list,
+        'ads_list_promoted': ads_list_promoted
     }
     return HttpResponse(template.render(context, request))
 
 
+def ad_view(request, ad_id):
+    ad = Ad.objects.filter(pk=ad_id)
+    template = loader.get_template('ads/ad_view.html')
+    context = {
+        'ad': ad[0]
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def search(request):
+    ads = Ad.objects.all()
+    query = request.GET.get('q')
+    ads_filtered = Ad.objects.filter(Q(title__icontains=query))
+    ads_list_promoted = ads[:3]
+    paginator = Paginator(ads_filtered, 9)
+    page = request.GET.get('page')
+    ads_list_filtered = paginator.get_page(page)
+    return render(request, 'home.html', {'ads_list': ads_list_filtered, 'ads_list_promoted': ads_list_promoted})
+
+
 def your_ads(request):
     username = request.user.username
-    template = loader.get_template('account/profile.html')
-    ads = Ad.objects.filter(user__username__contains = username)
+    template = loader.get_template('account/your_ads.html')
     context = {
-        'ads_list': ads
+        'ads_list': get_ads_by_username(username),
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def profile(request):
+    template = loader.get_template('account/profile.html')
+    context = {
+        'user': request.user
     }
     return HttpResponse(template.render(context, request))
