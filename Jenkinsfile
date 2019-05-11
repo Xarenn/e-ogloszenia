@@ -1,4 +1,4 @@
-node('docker') {
+node {
 
 	stage 'build'
 		sh "docker stop nginx"
