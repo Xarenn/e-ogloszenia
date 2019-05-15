@@ -92,7 +92,7 @@ ENV/
 env.bak/
 venv.bak/
 .vscode
-
+migrations/
 # Spyder project settings
 .spyderproject
 .spyproject
