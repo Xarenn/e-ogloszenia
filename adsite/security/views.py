@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .register_form import RegisterForm
+from .details_form import DetailsForm
 from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
@@ -32,3 +33,16 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'auth/change_password.html', {'form': form })
 
+def show_details(request):
+    return render(request, 'details.html')
+
+def edit_details(request):
+    if request.method == 'POST':
+           form = DetailsForm(request.POST, instance=request.user)
+           if form.is_valid():
+               form.save()
+               return redirect('show_details')
+    else:
+        form = DetailsForm(instance=request.user)
+    return render(request, 'edit_details.html', {'form': form})
+         
