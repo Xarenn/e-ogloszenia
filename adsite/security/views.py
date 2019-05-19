@@ -17,7 +17,7 @@ def register_view(request):
             return redirect('home')
     else:
         form = RegisterForm()
-    return render(request, 'auth/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 def change_password(request):
     if request.method == 'POST':
@@ -31,7 +31,7 @@ def change_password(request):
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'auth/change_password.html', {'form': form })
+    return render(request, 'registration/change_password.html', {'form': form })
 
 def show_details(request):
     return render(request, 'details.html')
