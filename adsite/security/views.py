@@ -23,7 +23,6 @@ def register_view(request):
             # Future
             current_site = get_current_site(request)
             mail_subject = 'Activate your account'
-            print(urlsafe_base64_encode(force_bytes(user.pk)))
             message = render_to_string('registration/email_acc.html', {
                 'user': user,
                 'domain': current_site.domain,

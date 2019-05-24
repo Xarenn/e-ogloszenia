@@ -7,7 +7,7 @@ from datetime import date
 from .managers import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length=60, unique=True)
+    email = models.EmailField(max_length=255, unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,

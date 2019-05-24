@@ -2,42 +2,23 @@
 
 
 {% block title %}
-    <title>Register</title>
+<title>Register</title>
 {% endblock title %}
 
 
 {% block body %}
 <div id="content-container" class="container p-none">
-  <div class="lgn-container col-lg-8">
-      <form id="login-form" method="post" 
-            action="{% url 'register' %}">
-          {% csrf_token %}
-          <table class="table">
-            <tr class="wrapper">
-                <td><label for="{{form.email.id_for_label}}">Email: </label></td>
-                <td>{{form.email}}</td>
-            </tr>
-            <tr class="wrapper">
-                {{form.password1.errors}}
-                <td><label for="{{form.password1.id_for_label}}">Password: </label></td>
-                <td>{{form.password1}}</td>
-            </tr>
-            <tr class="wrapper">
-                {{form.password2.errors}}
-                <td><label for="{{form.password2.id_for_label}}">Repeat Password: </label></td>
-                <td>{{form.password2}}</td>
-            </tr>
-          </table>
-          {% if form.errors %}
-              <p class=" label label-danger">
-                  Not this time my friend
-              </p>
-          {% endif %}
-
-          <input type="submit" value="Login" 
-                 class="btn btn-primary pull-right" />
-          <input type="hidden" name="next" value="{{ next }}" />
-      </form>
-  </div>
+    <div class="lgn-container col-lg-8">
+        <form id="login-form" method="post" action="/register/">
+            {% csrf_token %}
+            <p><label for="id_email">Email:</label> <input type="email" name="email" maxlength="255" autofocus=""
+                    required="" id="id_email"></p>
+            <p><label for="id_password1">Password:</label> <input type="password" name="password1" required=""
+                    id="id_password1"> <span class="helptext"></span></p>
+            <p><label for="id_password2">Password confirmation:</label> <input type="password" name="password2"
+                    required="" id="id_password2"> 
+            <input type="submit" value="Login" class="btn btn-primary pull-right">
+        </form>
+    </div>
 </div>
 {% endblock body %}
