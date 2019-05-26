@@ -20,23 +20,13 @@ def register_view(request):
             user = form.save()
             user.save()
             email = form.cleaned_data.get('email')
-            # Future
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your account'
             message = render_to_string('registration/email_acc.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            send_mail(
-                mail_subject,
-                message,
-                'cdn@cdn.pl',
-                [email],
-                fail_silently=False,
-            )
-            #
+            _send_activation_mail(email, message)
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = RegisterForm()
@@ -83,3 +73,12 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+def _send_activation_mail(email: str, message: str):
+    send_mail(
+        'Account Activation',
+        message,
+        'addservice@op.pl',
+        [email],
+        fail_silently=False,
+    ) 
