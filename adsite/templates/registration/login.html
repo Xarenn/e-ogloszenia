@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+<title>Login</title>
+{% endblock title %}
+
+
+{% block body %}
+<div id="content-container" class="container p-none">
+    <div class="lgn-container col-lg-8">
+        <form id="login-form" method="post" action="/account/login/">
+            {% csrf_token %}
+            <p>{{next}}</p>
+            <p><label for="id_username">Email:</label> <input type="text" name="username"
+                    autofocus="" required="" id="id_username"></p>
+            <p><label for="id_password">Password:</label> <input type="password" name="password" required=""
+                    id="id_password"></p>
+            {% if form.errors %}
+            <p>
+                Your username and password didn't match.
+                Please try again.
+            </p>
+            {% endif %}
+            <input type="submit" value="Login" class="btn btn-primary pull-right">
+            <input type="hidden" name="next" value="">
+        </form>
+    </div>
+</div>
+{% endblock body %}

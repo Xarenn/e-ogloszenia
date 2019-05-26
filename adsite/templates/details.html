@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    <title>Details</title>
+{% endblock title %}
+
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card text-center">
+        <div class="card-header">
+          Account Details
+        </div>
+        <div class="card-body">
+          <p>Name: {{user.name}}</p> 
+          <p>Phone: {{user.phone}}</p> 
+          <a href="{% url 'edit_details' %}" class="btn btn-success btn-lg">Edit</a>
+        </div>
+        <div class="card-footer text-muted">
+          <p>Entry date: {{user.entry_date}} </p>
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Home Page</title>
+{% endblock%}
+
+{% block body %}
+    <div class="container">
+        {% if user.is_authenticated %}
+        <h1 class="text-center" style="width:200px">Hello email: {{user.email}}</h1>
+        {% else %}
+            <h1>Login pls</h1>
+        {% endif %}
+    </div>
+{% endblock %}
