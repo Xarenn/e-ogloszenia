@@ -13,6 +13,6 @@ urlpatterns = [
     path('details/', show_details, name='show_details'),
     path('edit_details/', edit_details, name='edit_details'),
     path('account/', include('django.contrib.auth.urls')),
-    path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
         activate, name='activate'),
 ]
