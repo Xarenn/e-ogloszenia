@@ -1,15 +1,39 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>Home Page</title>
+<title>Home Page</title>
 {% endblock%}
 
 {% block body %}
-    <div class="container">
-        {% if user.is_authenticated %}
-        <h1 class="text-center" style="width:200px">Hello email: {{user.email}}</h1>
-        {% else %}
-            <h1>Login pls</h1>
-        {% endif %}
+<div class="container">
+    {% for ad in ads %}
+        {% load static %}
+        <div class="card d-inline-block mr-5 mt-5" style="width: 14rem;">
+            <img class="card-img-top" src="{% static 'pages/download.svg' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">{{ad.title}}</h5>
+                <p class="card-text">{{ad.description}}</p>
+                <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if ads.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ ads.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ ads.number }} of {{ ads.paginator.num_pages }}.
+            </span>
+    
+            {% if ads.has_next %}
+                <a href="?page={{ ads.next_page_number }}">next</a>
+                <a href="?page={{ ads.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
     </div>
+</div>
 {% endblock %}

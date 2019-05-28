@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from .token_generator import account_activation_token
 from .models import User
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 def register_view(request):
     if request.method == 'POST':
@@ -20,12 +21,14 @@ def register_view(request):
             user = form.save()
             user.save()
             email = form.cleaned_data.get('email')
-            _send_activation_mail(email)
+            _send_activation_mail(email, user, get_current_site(request))
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
+
+@login_required
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -40,9 +43,12 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'registration/change_password.html', {'form': form })
 
-def show_details(request):
-    return render(request, 'details.html')
 
+@login_required
+def show_details(request):
+        return render(request, 'details.html')
+
+@login_required
 def edit_details(request):
     if request.method == 'POST':
            form = DetailsForm(request.POST, instance=request.user)
@@ -68,7 +74,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
-def _send_activation_mail(email: str):
+def _send_activation_mail(email: str, user: User, current_site):
     message = render_to_string('registration/email_acc.html', {
         'user': user,
         'domain': current_site.domain,
