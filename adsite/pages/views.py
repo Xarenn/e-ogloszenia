@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-import requests as r
 from django.contrib.auth.decorators import login_required
 from core.create_ad_form import AdForm
 import json
@@ -12,12 +11,13 @@ from core import static_data
 
 
 def home_view(request, *args, **kwargs):
-    ads = ''
+    page = kwargs['page']
+    print(page)
     return render(request, 'index.html', {'ads': ads})
 
 
 def ad_detail_view(request, ad_id):
-    response = r.get(api.GET_AD_BY_ID + str(ad_id))
+    response = requests.get(api.GET_AD_BY_ID + str(ad_id))
     ad = response.json()
     return render(request, 'ad_detail_view.html', ad)
 
