@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
     #midleapps
     'rest_framework',
-    'requests',
 
     #own apps
     'core',

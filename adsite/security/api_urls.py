@@ -1,0 +1,1 @@
+REGISTER_USER = 'http://localhost:8080/system/users/register'

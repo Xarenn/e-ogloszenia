@@ -1,1 +1,1 @@
-get_ad_by_id = 'http://localhost:8080/system/ads/'
+GET_AD_BY_ID = 'http://localhost:8080/system/ads/'
