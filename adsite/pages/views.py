@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 import requests as r
-from . import api
 from django.contrib.auth.decorators import login_required
 from core.create_ad_form import AdForm
 import json

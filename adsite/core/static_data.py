@@ -1,3 +1,5 @@
+from datetime import datetime
+
 categories = [
     ('Electronics', 'Electronics'),
 ]
