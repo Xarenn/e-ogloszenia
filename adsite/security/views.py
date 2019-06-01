@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 import requests as r
 from . import api_urls
 
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -44,23 +45,25 @@ def change_password(request):
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'registration/change_password.html', {'form': form })
+    return render(request, 'registration/change_password.html', {'form': form})
 
 
 @login_required
 def show_details(request):
-        return render(request, 'details.html')
+    return render(request, 'details.html')
+
 
 @login_required
 def edit_details(request):
     if request.method == 'POST':
-           form = DetailsForm(request.POST, instance=request.user)
-           if form.is_valid():
-               form.save()
-               return redirect('show_details')
+        form = DetailsForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('show_details')
     else:
         form = DetailsForm(instance=request.user)
     return render(request, 'edit_details.html', {'form': form})
+
 
 def activate(request, uidb64, token):
     try:
@@ -78,6 +81,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
+
 def _send_activation_mail(email: str, user: User, current_site):
     message = render_to_string('registration/email_acc.html', {
         'user': user,
@@ -91,4 +95,4 @@ def _send_activation_mail(email: str, user: User, current_site):
         'addservice@op.pl',
         [email],
         fail_silently=False,
-    ) 
+    )
