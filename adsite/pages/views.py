@@ -11,8 +11,12 @@ from core import static_data
 
 
 def home_view(request, *args, **kwargs):
-    page = kwargs['page']
-    print(page)
+    page = request.GET.get('page')
+    if page is None:
+        json_dict = requests.get(api.GET_ADS + 'page=0&size=20').json()
+    else:
+        json_dict = requests.get(api.GET_ADS + f'page={page}&size=20').json()
+    ads = json_dict['content']
     return render(request, 'index.html', {'ads': ads})
 
 

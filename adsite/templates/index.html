@@ -6,7 +6,8 @@
 
 {% block body %}
 <div class="container">
-    {% for ad in ads %}
+    <div class="wrapper">
+        {% for ad in ads %}
         {% load static %}
         <div class="card d-inline-block mr-5 mt-5" style="width: 14rem;">
             <img class="card-img-top" src="{% static 'pages/download.svg' %}" alt="Card image cap">
@@ -16,6 +17,31 @@
                 <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+
+
+    <style>
+        .pagination {
+            display: inline-block;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+    </style>
+    <div class="pagination mt-5">
+        <a href="#">&laquo;</a>
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a>
+        <a href="#">&raquo;</a>
+    </div>
 </div>
 {% endblock %}
