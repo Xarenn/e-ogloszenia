@@ -7,8 +7,9 @@ from core.create_ad_form import AdForm
 import json
 from datetime import datetime
 from django.utils.timezone import now
-import requests as r
+import requests 
 from security import api_urls as api
+from core import static_data
 
 
 def home_view(request, *args, **kwargs):
@@ -38,26 +39,10 @@ def create_ad(request):
             form_data = form.cleaned_data
             ad['AD'] = {
                 **form_data,
-                **_get_details(),
+                **static_data.details,
             }
             request_data = json.dumps(ad)
-            r.post(api.CREATE_AD, json=request_data)
+            requests.post(api.CREATE_AD, json=request_data)
     else:
         form = AdForm()
     return render(request, 'create_ad.html', {'form': form})
-
-
-def _get_details():
-    return {
-        'featured': False,
-        'entry_date': datetime.now().isoformat(),
-        'bump_date':  datetime.now().isoformat(),
-        "photos": {
-            "miniature_path": "ad:miniature.jpg",
-            "files_path": [
-                "ad:FCI1.jpg",
-                "ad:picture2.jpg",
-                "ad:picture5.jpg"
-            ]
-        }
-    }

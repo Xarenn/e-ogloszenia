@@ -14,7 +14,7 @@ from .models import User
 from .serializers import UserSerializer
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-import requests as r
+import requests 
 from . import api_urls
 
 
@@ -75,7 +75,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         serializer = UserSerializer(user)
-        r.post(api_urls.REGISTER_USER, json=serializer.data)
+        requests.post(api_urls.REGISTER_USER, json=serializer.data)
         login(request, user)
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
