@@ -5,7 +5,7 @@ from core.create_ad_form import AdForm
 import json
 from datetime import datetime
 from django.utils.timezone import now
-import requests 
+import requests
 from security import api_urls as api
 from core import static_data
 
@@ -13,11 +13,14 @@ from core import static_data
 def home_view(request, *args, **kwargs):
     page = request.GET.get('page')
     if page is None:
-        json_dict = requests.get(api.GET_ADS + 'page=0&size=20').json()
+        json_dict = requests.get(api.GET_ADS + 'page=0&size=1').json()
     else:
-        json_dict = requests.get(api.GET_ADS + f'page={page}&size=20').json()
+        page = int(page) - 1 
+        json_dict = requests.get(api.GET_ADS + f'page={page}&size=1').json()
     ads = json_dict['content']
-    return render(request, 'index.html', {'ads': ads})
+    details = _get_details(json_dict)
+    total_pages = json_dict['totalPages']
+    return render(request, 'index.html', {'ads': ads, 'details': details, 'range': range(1,total_pages+1)})
 
 
 def ad_detail_view(request, ad_id):
@@ -49,3 +52,10 @@ def create_ad(request):
     else:
         form = AdForm()
     return render(request, 'create_ad.html', {'form': form})
+
+def _get_details(json_dict):
+    temp = {}
+    temp['first'] = json_dict['first']
+    temp['last'] = json_dict['last']
+    temp['number'] = json_dict['number'] + 1
+    return temp

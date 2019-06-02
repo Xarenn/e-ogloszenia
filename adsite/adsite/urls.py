@@ -7,6 +7,7 @@ from django.conf import settings
 from security.views import register_view, change_password, show_details, edit_details, activate
 
 urlpatterns = [
+    path('', views.home_view, name='base'),
     path('home/', views.home_view, name='home'),
     path('register/', register_view, name='register'),
     path('admin/', admin.site.urls),
