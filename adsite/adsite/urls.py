@@ -20,4 +20,5 @@ urlpatterns = [
     path('ad/<int:ad_id>/', views.ad_detail_view, name='ad_details'),
     path('account/my_ads', views.get_user_ads, name='user_ads'),
     path('account/create_ad', views.create_ad, name='create_ad'),
+    path('error400', views.error_400, name='error400'),
 ]
