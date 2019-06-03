@@ -47,7 +47,7 @@ def create_ad(request):
         if form.is_valid():
             ad = _prepare_ad(request, form)
             request_data = json.dumps(ad)
-            response = requests.post(api.CREATE_AD, json=request_data)
+            response = requests.post(api.CREATE_AD, json=ad)
             print(request_data)
             print(response.content)
     else:
