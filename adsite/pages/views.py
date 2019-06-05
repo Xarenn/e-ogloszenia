@@ -14,7 +14,7 @@ from pprint import pprint
 def home_view(request, *args, **kwargs):
     page = request.GET.get('page')
     if page is None:
-        json_dict = requests.get(api.GET_ADS + 'page=0&size=20').json()
+        json_dict = requests.get(api.GET_ADS + 'page=0&size=1').json()
     else:
         try:
             page = int(page) - 1
@@ -22,11 +22,11 @@ def home_view(request, *args, **kwargs):
                 return redirect('error400')
         except (ValueError, KeyError):
             return redirect('error400')
-        json_dict = requests.get(api.GET_ADS + f'page={page}&size=20').json()
+        json_dict = requests.get(api.GET_ADS + f'page={page}&size=1').json()
     ads = json_dict['content']
     details = _get_details(json_dict)
     total_pages = json_dict['totalPages']
-    return render(request, 'index.html', {'ads': ads, 'details': details, 'range': range(1, total_pages+1)})
+    return render(request, 'index.html', {'ads': ads, 'details': details})
 
 
 def ad_detail_view(request, ad_id):

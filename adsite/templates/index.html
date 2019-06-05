@@ -22,27 +22,20 @@
 
     <ul class="pagination mt-5 ml-5">
         {% if details.first %}
-            <li class="page-item"><a class="page-link" href="?page={{details.number}}">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{details.number}}">Previous</a></li>
         {% else %}
         <li class="page-item"><a class="page-link" href="?page={{details.number|add:'-1'}}">Previous</a></li>
         {% endif %}
-        
-        {% for i in range  %}
-            {% if i == details.number %}
-                <li class="page-item active">
-                    <span class="page-link" href="?page={{details.number}}">
-                    {{details.number}}
-                    <span class="sr-only">(current)</span>
-                    </span>
-                </li>
-            {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-            {% endif %}
-        {% endfor %}
+        <li class="page-item active">
+            <span class="page-link" href="?page={{details.number}}">
+                {{details.number}}
+                <span class="sr-only">(current)</span>
+            </span>
+        </li>
         {% if details.last %}
-            <li class="page-item"><a class="page-link" href="?page={{details.number}}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{details.number}}">Next</a></li>
         {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{details.number|add:'1'}}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{details.number|add:'1'}}">Next</a></li>
         {% endif %}
     </ul>
 </div>
