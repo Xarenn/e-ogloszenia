@@ -14,7 +14,7 @@ from pprint import pprint
 def home_view(request, *args, **kwargs):
     page = request.GET.get('page')
     if page is None:
-        json_dict = requests.get(api.GET_ADS + 'page=0&size=1').json()
+        json_dict = requests.get(api.GET_ADS + 'page=0&size=20').json()
     else:
         try:
             page = int(page) - 1
@@ -22,7 +22,7 @@ def home_view(request, *args, **kwargs):
                 return redirect('error400')
         except (ValueError, KeyError):
             return redirect('error400')
-        json_dict = requests.get(api.GET_ADS + f'page={page}&size=1').json()
+        json_dict = requests.get(api.GET_ADS + f'page={page}&size=20').json()
     ads = json_dict['content']
     details = _get_details(json_dict)
     total_pages = json_dict['totalPages']
@@ -37,8 +37,11 @@ def ad_detail_view(request, ad_id):
 
 @login_required
 def get_user_ads(request):
-    return render(request, 'user_ads.html')
-
+    email = request.user.email
+    data = requests.get(api.GET_ADS_BY_USER_EMAIL + email)
+    ads = data.json()
+    return render(request, 'user_ads.html', {'ads': ads})
+    
 
 @login_required
 def create_ad(request):
@@ -77,7 +80,7 @@ def _prepare_ad(request, form):
         'description': form.cleaned_data['description'],
         'category': form.cleaned_data['category'],
         'personality': form.cleaned_data['personality'],
-        'price': 22,
+        'price': form.cleaned_data['price'],
         'entry_date': datetime.now().isoformat(),
         'bump_date':  datetime.now().isoformat(),
         'short_description':  form.cleaned_data['short_description'],

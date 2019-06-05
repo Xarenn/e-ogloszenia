@@ -1,14 +1,23 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>Create Ad</title>
+<title>Create Ad</title>
 {% endblock%}
 
 {% block body %}
-    <div class="container"> 
-        <!-- In Future show all ads -->
-
-        <!--  -->
-        <a class="btn btn-success btn-lg mt-5" href="{% url 'create_ad' %}">Create Ad</a>
-    </div>
+<div class="container">
+    {% for ad in ads %}
+        {% load static %}
+        <div class="card d-inline-block mr-5 mt-5" style="width: 14rem;">
+            <img class="card-img-top" src="{% static 'pages/download.svg' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">{{ad.title}}</h5>
+                <p class="card-text">{{ad.description}}</p>
+                <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<a class="btn btn-success btn-lg mt-5" href="{% url 'create_ad' %}">Create Ad</a>
+</div>
 {% endblock %}

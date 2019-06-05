@@ -7,8 +7,3 @@ categories = [
 personality = [
     ('COMPANY', 'COMPANY'),
 ]
-
-
-details = {
-   
-}

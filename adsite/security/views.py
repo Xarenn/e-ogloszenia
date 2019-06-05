@@ -16,6 +16,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 import requests 
 from . import api_urls
+import json
 
 
 def register_view(request):
@@ -75,7 +76,10 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         serializer = UserSerializer(user)
-        requests.post(api_urls.REGISTER_USER, json=serializer.data)
+        response = requests.post(api_urls.REGISTER_USER, json=serializer.data)
+        data = json.loads(response.text)
+        user.server_id = data['id']
+        user.save()
         login(request, user)
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
