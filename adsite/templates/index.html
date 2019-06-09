@@ -6,7 +6,8 @@
 
 {% block body %}
 <div class="container">
-    {% for ad in ads %}
+    <div class="wrapper">
+        {% for ad in ads %}
         {% load static %}
         <div class="card d-inline-block mr-5 mt-5" style="width: 14rem;">
             <img class="card-img-top" src="{% static 'pages/download.svg' %}" alt="Card image cap">
@@ -16,6 +17,26 @@
                 <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+
+    <ul class="pagination mt-5 ml-5">
+        {% if details.first %}
+        <li class="page-item"><a class="page-link" href="?page={{details.number}}">Previous</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{details.number|add:'-1'}}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active">
+            <span class="page-link" href="?page={{details.number}}">
+                {{details.number}}
+                <span class="sr-only">(current)</span>
+            </span>
+        </li>
+        {% if details.last %}
+        <li class="page-item"><a class="page-link" href="?page={{details.number}}">Next</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{details.number|add:'1'}}">Next</a></li>
+        {% endif %}
+    </ul>
 </div>
 {% endblock %}

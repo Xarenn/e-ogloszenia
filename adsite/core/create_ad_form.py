@@ -8,5 +8,4 @@ class AdForm(forms.Form):
     personality = forms.ChoiceField(choices=static_data.personality)
     description = forms.CharField(widget=forms.Textarea)
     price = forms.FloatField()
-
-
+    
