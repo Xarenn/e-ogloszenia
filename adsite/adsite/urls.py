@@ -1,9 +1,6 @@
-
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from pages import views
-from django.conf.urls.static import static
-from django.conf import settings
 from security.views import register_view, change_password, show_details, edit_details, activate
 
 urlpatterns = [
@@ -15,10 +12,10 @@ urlpatterns = [
     path('details/', show_details, name='show_details'),
     path('edit_details/', edit_details, name='edit_details'),
     path('account/', include('django.contrib.auth.urls')),
-    path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
+    re_path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
         activate, name='activate'),
-    path('ad/<int:ad_id>/', views.ad_detail_view, name='ad_details'),
+    path('ad/<int:ad_id>', views.ad_detail_view, name='ad_details'),
     path('account/my_ads', views.get_user_ads, name='user_ads'),
     path('account/create_ad', views.create_ad, name='create_ad'),
-    path('error400', views.error_400, name='error400'),
+    path('error400', views.error_404, name='error404'),
 ]

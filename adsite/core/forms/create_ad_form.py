@@ -1,5 +1,5 @@
 from django import forms
-from . import static_data
+from core import static_data
 
 class AdForm(forms.Form):
     title = forms.CharField(max_length=255, min_length=5)
