@@ -20,10 +20,15 @@ def home_view(request, *args, **kwargs):
                 return redirect('/')
         except (TypeError, ValueError, KeyError):
             return redirect('/')
-    assert(page is not None)
+
+    assert (page is not None)
     json_dict = request_get(api.GET_ADS + f'page={page}&size=12')
     if json_dict is None:
         return render(request, 'index.html', {'ads': None, 'details': None})
+
+    total_pages = json_dict.json()['totalPages']
+    if page > total_pages - 1:
+        json_dict = request_get(api.GET_ADS + f'page={total_pages - 1}&size=12')
 
     ads = json_dict.json()['content']
     details = _get_details(json_dict.json())
@@ -78,8 +83,8 @@ def edit_ad(request, ad_id):
             ad_db.is_active = Ad.FALSE
             ad_db.user = request.user
             Ad.save(ad_db)
-            #TODO ad.image
-            #TODO return valid html with success creating
+            # TODO ad.image
+            # TODO return valid html with success creating
         else:
             print("failed")
 
@@ -106,8 +111,8 @@ def create_ad(request):
             ad = convert_json_to_ad(content)
             ad.user = request.user
             Ad.save(ad)
-            #TODO ad.image
-            #TODO return valid html with success creating
+            # TODO ad.image
+            # TODO return valid html with success creating
 
     else:
         form = AdForm()
@@ -150,8 +155,8 @@ def _prepare_ad(request, form):
             'personality': form.cleaned_data['personality'],
             'price': form.cleaned_data['price'],
             'entry_date': datetime.now().isoformat(),
-            'bump_date':  datetime.now().isoformat(),
-            'short_description':  form.cleaned_data['short_description'],
+            'bump_date': datetime.now().isoformat(),
+            'short_description': form.cleaned_data['short_description'],
             'featured': False,
             "photos": {
                 "miniature_path": "ad:miniature.jpg",
@@ -175,8 +180,8 @@ def _prepare_ad_dto(form):
         'personality': form.cleaned_data['personality'],
         'price': form.cleaned_data['price'],
         'entry_date': datetime.now().isoformat(),
-        'bump_date':  datetime.now().isoformat(),
-        'short_description':  form.cleaned_data['short_description'],
+        'bump_date': datetime.now().isoformat(),
+        'short_description': form.cleaned_data['short_description'],
         'featured': False,
         "photos": {
             "miniature_path": "ad:miniature.jpg",
