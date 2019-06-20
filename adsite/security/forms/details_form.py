@@ -31,5 +31,7 @@ class DetailsForm(forms.ModelForm):
         if response.status_code == 200:
             if commit:
                 user.save()
+        else:
+            print("ERROR: " + str(response.content))
 
         return user

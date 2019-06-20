@@ -97,11 +97,12 @@ def activate(request, uidb64, token):
             return HttpResponse("Error occured") #TODO
 
         data = json.loads(response.text)
-        try:
-            user.server_id = data['id']
-        except KeyError:
+        server_id = data.get('id', None)
+
+        if server_id is None:
             return HttpResponse("Server error") #TODO
 
+        user.server_id = server_id
         user.save()
         login(request, user)
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')

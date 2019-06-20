@@ -13,11 +13,13 @@
             <div class="card-body">
                 <h5 class="card-title">{{ad.title}}</h5>
                 <p class="card-text">{{ad.description}}</p>
+                {% if ad.id %}
                 <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
-</div>
 <a class="btn btn-success btn-lg mt-5" href="{% url 'create_ad' %}">Create Ad</a>
 </div>
+
 {% endblock %}
