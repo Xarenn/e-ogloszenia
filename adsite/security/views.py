@@ -1,7 +1,7 @@
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .register_form import RegisterForm
-from .details_form import DetailsForm
-from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -9,13 +9,17 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from django.http import HttpResponse
-from .token_generator import account_activation_token
+
+from core.services.client_service import request_post, request_get
+from security.auth.api_urls import GET_USER_BY_EMAIL
+
+from security.auth.token_generator import account_activation_token
 from .models import User
-from .serializers import UserSerializer
-from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
-import requests 
-from . import api_urls
+from security.auth.serializers import UserSerializer
+from security.forms.register_form import RegisterForm
+from security.forms.details_form import DetailsForm
+from security.auth import api_urls
+
 import json
 
 
@@ -27,7 +31,7 @@ def register_view(request):
             user.save()
             email = form.cleaned_data.get('email')
             _send_activation_mail(email, user, get_current_site(request))
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return HttpResponse('Please confirm your email address to complete the registration') #TODO SUCCESS REGISTER EMAIL
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -41,6 +45,9 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password has been updated')
+
+            # TODO response = request_post() changing password
+
             return redirect('change_password')
         else:
             messages.error(request, 'Please correct the error below.')
@@ -62,7 +69,15 @@ def edit_details(request):
             form.save()
             return redirect('show_details')
     else:
-        form = DetailsForm(instance=request.user)
+        response = request_get(GET_USER_BY_EMAIL+request.user.email)
+        if response.status_code == 200:
+            name_db = response.json().get('name', None)
+            if name_db == request.user.name:
+                form = DetailsForm(instance=request.user)
+            else:
+                form = None
+        else:
+            form = None
     return render(request, 'edit_details.html', {'form': form})
 
 
@@ -76,9 +91,18 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         serializer = UserSerializer(user)
-        response = requests.post(api_urls.REGISTER_USER, json=serializer.data)
+        response = request_post(api_urls.REGISTER_USER, data=serializer.data)
+
+        if response is None:
+            return HttpResponse("Error occured") #TODO
+
         data = json.loads(response.text)
-        user.server_id = data['id']
+        server_id = data.get('id', None)
+
+        if server_id is None:
+            return HttpResponse("Server error") #TODO
+
+        user.server_id = server_id
         user.save()
         login(request, user)
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
