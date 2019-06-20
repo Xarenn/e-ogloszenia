@@ -16,6 +16,9 @@
                 {% if ad.id %}
                 <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
                 {% endif %}
+                {% if ad.id %}
+                <a href="{% url 'edit_ad' ad.id %}" class="btn btn-primary ml-5">Edit</a>
+                {% endif %}
             </div>
         </div>
     {% endfor %}

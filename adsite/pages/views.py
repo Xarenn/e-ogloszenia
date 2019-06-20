@@ -5,6 +5,7 @@ from datetime import datetime
 
 from core.models import Ad
 from core.services.client_service import request_get, request_post
+from pages.converter.json_converter import convert_json_to_ad
 from security.auth import api_urls as api
 from security.auth.api_urls import GET_AD_BY_ID
 
@@ -42,7 +43,7 @@ def ad_detail_view(request, ad_id):
 def get_user_ads(request):
     email = request.user.email
     data = request_get(api.GET_ADS_BY_USER_EMAIL + email)
-
+    print(data.content)
     if data is None or data.status_code != 200:
         return render(request, 'user_ads.html', {'ads': []})
 
@@ -56,32 +57,40 @@ def edit_ad(request, ad_id):
 
         form = AdForm(request.POST)
         if form.is_valid():
-            ad = _prepare_update_ad(request, server_id, form)
+            ad_db = Ad.objects.get(server_id=ad_id)
+            ad = _prepare_update_ad(request, ad_id, form)
+            print(ad)
             response = request_post(api.UPDATE_AD_IN_USER, data=ad)
-
             if response is not None and response.status_code != 200:
-                return get_user_ads(request)
+                return redirect('user_ads')
 
             content = response.json()
 
             # TODO OTHER METHOD
-            ad = Ad()
-            ad.server_id = content.get('id', None)
-            ad.is_featured = content.get('featured', None)
-            ad.is_active = Ad.FALSE
-            ad.user = request.user
-            Ad.objects.filter(pk=ad_id).update(is_featured=content.get('featured', False))
+            ad_db.server_id = content.get('id')
+            ad_db.is_featured = content.get('featured', False)
+            ad_db.description = content.get('description')
+            ad_db.short_description = content.get('short_description')
+            ad_db.title = content.get('title')
+            ad_db.category = content.get('category')
+            ad_db.personality = content.get('personality')
+            ad_db.price = content.get('price')
+            ad_db.is_active = Ad.FALSE
+            ad_db.user = request.user
+            Ad.save(ad_db)
             #TODO ad.image
             #TODO return valid html with success creating
+        else:
+            print("failed")
 
     else:
-        ad_data = request_get(api.GET_AD_BY_ID + _get_ad_server_id(ad_id))
+        ad_data = request_get(api.GET_AD_BY_ID + str(ad_id))
 
         if ad_data.status_code != 200:
             return redirect("user_ads")
 
-        form = AdForm(ad_data.json())
-    return render(request, 'create_ad.html', {'form': form})
+        form = AdForm(instance=convert_json_to_ad(ad_data.json()))
+    return render(request, 'edit_ad.html', {'form': form})
 
 
 @login_required
@@ -94,10 +103,7 @@ def create_ad(request):
             content = response.json()
 
             # TODO OTHER METHOD
-            ad = Ad()
-            ad.server_id = content.get('id', None)
-            ad.is_featured = content.get('featured', None)
-            ad.is_active = Ad.FALSE
+            ad = convert_json_to_ad(content)
             ad.user = request.user
             Ad.save(ad)
             #TODO ad.image
@@ -120,12 +126,12 @@ def _get_details(json_dict):
     }
 
 
-def _prepare_update_ad(request, ad, form):
+def _prepare_update_ad(request, server_id, form):
     return {
         'login': request.user.email,
         'password': request.user.password,
         'AD_UPDATE_DTO': {
-            'ad_server_id': ad.server_id,
+            'ad_server_id': server_id,
             'content_ad': _prepare_ad_dto(form)
         }
 
@@ -162,28 +168,22 @@ def _prepare_ad(request, form):
 
 def _prepare_ad_dto(form):
     return {
-        'AD': {
-            'title': form.cleaned_data['title'],
-            'phone': '6666666',
-            'description': form.cleaned_data['description'],
-            'category': form.cleaned_data['category'],
-            'personality': form.cleaned_data['personality'],
-            'price': form.cleaned_data['price'],
-            'entry_date': datetime.now().isoformat(),
-            'bump_date':  datetime.now().isoformat(),
-            'short_description':  form.cleaned_data['short_description'],
-            'featured': False,
-            "photos": {
-                "miniature_path": "ad:miniature.jpg",
-                "files_path": [
-                    "ad:FCI1.jpg",
-                    "ad:picture2.jpg",
-                    "ad:picture5.jpg"
-                ]
-            }
+        'title': form.cleaned_data['title'],
+        'phone': '6666666',
+        'description': form.cleaned_data['description'],
+        'category': form.cleaned_data['category'],
+        'personality': form.cleaned_data['personality'],
+        'price': form.cleaned_data['price'],
+        'entry_date': datetime.now().isoformat(),
+        'bump_date':  datetime.now().isoformat(),
+        'short_description':  form.cleaned_data['short_description'],
+        'featured': False,
+        "photos": {
+            "miniature_path": "ad:miniature.jpg",
+            "files_path": [
+                "ad:FCI1.jpg",
+                "ad:picture2.jpg",
+                "ad:picture5.jpg"
+            ]
         }
     }
-
-
-def _get_ad_server_id(ad_id):
-    return Ad.objects.all().filter(id=ad_id)
