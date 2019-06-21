@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -18,7 +21,7 @@ from .models import User
 from security.auth.serializers import UserSerializer
 from security.forms.register_form import RegisterForm
 from security.forms.details_form import DetailsForm
-from security.auth import api_urls
+from security.auth import api_urls as api
 
 import json
 
@@ -42,13 +45,26 @@ def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
+            old_password = deepcopy(request.user.password)
+
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, 'Your password has been updated')
 
-            # TODO response = request_post() changing password
+            pass_updater = {
+                "login": request.user.email,
+                "password": old_password,
+                "UPDATE": {
+                    "oldPassword": old_password,
+                    "newPassword": user.password
+                }
+            }
 
-            return redirect('change_password')
+            response = request_post(api.CHANGE_PASSWORD, data=pass_updater)
+            if response.status_code != 200:
+                return redirect('error404')
+
+            messages.success(request, "Password changed")
+            return redirect('user_ads')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
@@ -91,7 +107,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         serializer = UserSerializer(user)
-        response = request_post(api_urls.REGISTER_USER, data=serializer.data)
+        response = request_post(api.REGISTER_USER, data=serializer.data)
 
         if response is None:
             return HttpResponse("Error occured") #TODO
