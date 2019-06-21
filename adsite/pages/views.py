@@ -7,7 +7,6 @@ from core.models import Ad
 from core.services.client_service import request_get, request_post
 from pages.converter.json_converter import convert_json_to_ad
 from security.auth import api_urls as api
-from security.auth.api_urls import GET_AD_BY_ID
 
 
 def home_view(request, *args, **kwargs):
@@ -66,7 +65,7 @@ def edit_ad(request, ad_id):
 
             content = response.json()
 
-            # TODO OTHER METHOD
+            #   OTHER METHOD
             ad_db.server_id = content.get('id')
             ad_db.is_featured = content.get('featured', False)
             ad_db.description = content.get('description')
