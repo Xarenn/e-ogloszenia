@@ -1,5 +1,14 @@
+import json
+import os
+
+from django.core.files.storage import default_storage, FileSystemStorage
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView
+from rest_framework import serializers
+
+from adsite import settings
+from adsite.settings import MEDIA_ROOT
 from core.forms.create_ad_form import AdForm
 from datetime import datetime
 
@@ -7,6 +16,12 @@ from core.models import Ad
 from core.services.client_service import request_get, request_post
 from pages.converter.json_converter import convert_json_to_ad
 from security.auth import api_urls as api
+
+
+class AdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ad
+        fields = ('server_id', 'title', 'description', 'image')
 
 
 def home_view(request, *args, **kwargs):
@@ -40,7 +55,10 @@ def ad_detail_view(request, ad_id):
     ad = request_get(api.GET_AD_BY_ID + str(ad_id))
     if ad is None:
         return render(request, 'index.html')
-    return render(request, 'ad_detail_view.html', ad.json())
+    ad_db = Ad.objects.get(server_id=ad.json().get('id'))
+    serializer = AdSerializer(ad_db)
+    url_image = "http://localhost:8000"+ad_db.image.url
+    return render(request, 'ad_detail_view.html', {'miniature': url_image, 'data': serializer.data})
 
 
 @login_required
@@ -100,16 +118,18 @@ def edit_ad(request, ad_id):
 @login_required
 def create_ad(request):
     if request.method == 'POST':
-        form = AdForm(request.POST)
+        form = AdForm(request.POST, request.FILES)
         if form.is_valid():
             ad = _prepare_ad(request, form)
             response = request_post(api.CREATE_AD, data=ad)
             content = response.json()
 
             # TODO OTHER METHOD
-            ad = convert_json_to_ad(content)
-            ad.user = request.user
-            Ad.save(ad)
+            ad_converted = convert_json_to_ad(content)
+            ad_converted.user = request.user
+            ad_converted.image = request.FILES['image']
+
+            Ad.save(ad_converted)
             # TODO ad.image
             # TODO return valid html with success creating
 
@@ -148,7 +168,7 @@ def _prepare_ad(request, form):
         'password': request.user.password,
         'AD': {
             'title': form.cleaned_data['title'],
-            'phone': '6666666',
+            'phone': "23523523",
             'description': form.cleaned_data['description'],
             'category': form.cleaned_data['category'],
             'personality': form.cleaned_data['personality'],
@@ -158,7 +178,7 @@ def _prepare_ad(request, form):
             'short_description': form.cleaned_data['short_description'],
             'featured': False,
             "photos": {
-                "miniature_path": "ad:miniature.jpg",
+                "miniature_path": "trykytyw",
                 "files_path": [
                     "ad:FCI1.jpg",
                     "ad:picture2.jpg",

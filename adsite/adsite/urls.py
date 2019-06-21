@@ -1,5 +1,8 @@
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
+
+from adsite import settings
 from pages import views
 from security.views import register_view, change_password, show_details, edit_details, activate
 
@@ -19,4 +22,4 @@ urlpatterns = [
     path('account/create_ad', views.create_ad, name='create_ad'),
     path('account/edit_ad/<int:ad_id>', views.edit_ad, name='edit_ad'),
     path('error400', views.error_404, name='error404'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
