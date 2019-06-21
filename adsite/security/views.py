@@ -59,10 +59,7 @@ def change_password(request):
                 }
             }
 
-            print(pass_updater)
             response = request_post(api.CHANGE_PASSWORD, data=pass_updater)
-            print(response.content)
-            print(response.status_code)
             if response.status_code != 200:
                 return redirect('error404')
 
