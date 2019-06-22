@@ -6,6 +6,7 @@ from security.views import register_view, change_password, show_details, edit_de
 urlpatterns = [
     path('', views.home_view, name='base'),
     path('home/', views.home_view, name='home'),
+    path('search', views.search, name='search'),
     path('register/', register_view, name='register'),
     path('admin/', admin.site.urls),
     path('account/change_password/', change_password, name='change_password'),
