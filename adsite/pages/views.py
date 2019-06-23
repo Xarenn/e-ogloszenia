@@ -1,20 +1,16 @@
 import json
 import os
 
-from django.core.files.storage import default_storage, FileSystemStorage
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
 from rest_framework import serializers
 
-from adsite import settings
-from adsite.settings import MEDIA_ROOT
 from core.forms.create_ad_form import AdForm
 from datetime import datetime
 
 from core.models import Ad
 from core.services.client_service import request_get, request_post
-from pages.converter.json_converter import convert_json_to_ad
+from pages.converter.json_converter import convert_json_to_ad, convert_form_to_ad
 from security.auth import api_urls as api
 
 
@@ -65,7 +61,6 @@ def ad_detail_view(request, ad_id):
 def get_user_ads(request):
     email = request.user.email
     data = request_get(api.GET_ADS_BY_USER_EMAIL + email)
-    print(data.content)
     if data is None or data.status_code != 200:
         return render(request, 'user_ads.html', {'ads': []})
 
@@ -79,10 +74,14 @@ def edit_ad(request, ad_id):
 
         form = AdForm(request.POST)
         if form.is_valid():
-            ad_db = Ad.objects.get(server_id=ad_id)
+            ad_db = get_object_or_404(Ad, server_id=ad_id)
             ad = _prepare_update_ad(request, ad_id, form)
-            print(ad)
+
+            if ad_db.user.email != request.user.email:
+                return error_404(request)
+
             response = request_post(api.UPDATE_AD_IN_USER, data=ad)
+
             if response is not None and response.status_code != 200:
                 return redirect('user_ads')
 
@@ -107,7 +106,9 @@ def edit_ad(request, ad_id):
 
     else:
         ad_data = request_get(api.GET_AD_BY_ID + str(ad_id))
-
+        ad_db = get_object_or_404(Ad, server_id=ad_id)
+        if ad_db.user.email != request.user.email:
+            return error_404(request)
         if ad_data.status_code != 200:
             return redirect("user_ads")
 
@@ -120,14 +121,16 @@ def create_ad(request):
     if request.method == 'POST':
         form = AdForm(request.POST, request.FILES)
         if form.is_valid():
-            ad = _prepare_ad(request, form)
-            response = request_post(api.CREATE_AD, data=ad)
-            content = response.json()
-
             # TODO OTHER METHOD
-            ad_converted = convert_json_to_ad(content)
+            ad_converted = convert_form_to_ad(form)
             ad_converted.user = request.user
             ad_converted.image = request.FILES['image']
+
+            ad = _prepare_ad(request, form, ad_converted.image.url)
+            response = request_post(api.CREATE_AD, data=ad)
+
+            if response.status_code != 200:
+                return redirect("user_ads")
 
             Ad.save(ad_converted)
             # TODO ad.image
@@ -162,7 +165,7 @@ def _prepare_update_ad(request, server_id, form):
     }
 
 
-def _prepare_ad(request, form):
+def _prepare_ad(request, form, miniature_url):
     ad = {
         'login': request.user.email,
         'password': request.user.password,
@@ -178,7 +181,7 @@ def _prepare_ad(request, form):
             'short_description': form.cleaned_data['short_description'],
             'featured': False,
             "photos": {
-                "miniature_path": "trykytyw",
+                "miniature_path": miniature_url,
                 "files_path": [
                     "ad:FCI1.jpg",
                     "ad:picture2.jpg",
