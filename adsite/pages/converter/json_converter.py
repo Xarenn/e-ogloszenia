@@ -1,4 +1,6 @@
 import json
+
+from core.forms.create_ad_form import AdForm
 from core.models import Ad
 
 
@@ -16,4 +18,15 @@ def convert_json_to_ad(data_json):
     ad.personality = ad_json.get('personality')
     ad.price = ad_json.get('price')
 
+    return ad
+
+
+def convert_form_to_ad(form: AdForm):
+    ad = Ad()
+    ad.price = form.cleaned_data['price']
+    ad.personality = form.personality
+    ad.title = form.title
+    ad.short_description = form.short_description
+    ad.category = form.category
+    ad.description = form.description
     return ad

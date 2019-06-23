@@ -6,7 +6,7 @@
 
 {% block body %}
     <div class="container">
-      <form method="POST">
+      <form enctype="multipart/form-data" method="POST">
         {% csrf_token %}
         {{form.as_p}}
         <input type="submit" class="btn btn-lg btn-success">

@@ -1,7 +1,12 @@
 from django.db import models
+from django.urls import reverse
 
 from core import static_data
 from security.models import User
+
+
+def location_file(instance, filename):
+    return 'user_images/%s/%s' % (instance.server_id, filename)
 
 
 class Ad(models.Model):
@@ -13,7 +18,6 @@ class Ad(models.Model):
         (FALSE, 'F')
     )
 
-    image = models.ImageField(upload_to='upload/', blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.CharField(choices=ACTIVE_MODELS, max_length=1, default=FALSE)
     server_id = models.IntegerField(blank=True, null=True)
@@ -25,3 +29,4 @@ class Ad(models.Model):
     personality = models.CharField(default=None, choices=static_data.personality, max_length=64, null=False)
     description = models.TextField(default=None, max_length=1024, null=False)
     price = models.FloatField(default=0, null=False)
+    image = models.ImageField(upload_to=location_file)

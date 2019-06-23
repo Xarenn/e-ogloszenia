@@ -6,9 +6,9 @@
 
 {% block body %}
     <div class="container">
-        <h1 class="text-center">ID: {{id}}</h1>
-        <h1 class="text-center">Title: {{title}}</h1>
-        <h1 class="text-center">description: {{description}}</h1>
-        <h1 class="text-center">phone: {{phone}}</h1>
+        <h1 class="text-center">ID: {{data.server_id}}</h1>
+        <h1 class="text-center">Title: {{data.title}}</h1>
+        <h1 class="text-center">description: {{data.description}}</h1>
+        <img src="{{miniature}}" alt="Tinky" style="max-height: 500px; max-width; 500px"/>
     </div>
 {% endblock %}
