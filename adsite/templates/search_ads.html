@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Search</title>
+{% endblock title %}
+
+
+{% block body %}
+    <div class="container">
+        <div class="wrapper">
+            {% for ad in ads %}
+                {% load static %}
+                <div class="card d-inline-block mr-5 mt-5" style="width: 14rem;">
+                    <img class="card-img-top" src="{% static 'pages/download.svg' %}" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ ad.title }}</h5>
+                        <p class="card-text">{{ ad.description }}</p>
+                        <a href="{% url 'ad_details' ad.id %}" class="btn btn-primary ml-5">Show</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <ul class="pagination mt-5 ml-5">
+            {% if ads.has_previous %}
+                <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ ads.number|add:'-1' }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link" href="?q={{ query }}&page={{ ads.number }}">
+                    {{ ads.number }}
+                    <span class="sr-only">(current)</span>
+                </span>
+            </li>
+
+            {% if ads.has_next %}
+                <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ ads.number|add:'1' }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}

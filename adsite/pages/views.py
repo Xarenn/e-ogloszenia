@@ -1,11 +1,15 @@
-import json
-import os
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
+from core import static_data
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from rest_framework import serializers
-
 from core.forms.create_ad_form import AdForm
+from core.forms.search_form import SearchFrom
 from datetime import datetime
 
 from core.models import Ad
@@ -34,7 +38,7 @@ def home_view(request, *args, **kwargs):
     assert (page is not None)
     json_dict = request_get(api.GET_ADS + f'page={page}&size=12')
     if json_dict is None:
-        return render(request, 'index.html', {'ads': None, 'details': None})
+        return render(request, 'index.html', {'ads': None, 'details': None, 'search_categories': static_data.categories})
 
     total_pages = json_dict.json()['totalPages']
     if page > total_pages - 1:
@@ -43,6 +47,28 @@ def home_view(request, *args, **kwargs):
     ads = json_dict.json()['content']
     details = _get_details(json_dict.json())
     return render(request, 'index.html', {'ads': ads, 'details': details})
+
+
+def search(request):
+    query = request.GET.get('q')
+    ads_filtered = Ad.objects.filter(Q(title__icontains=query))
+    paginator = Paginator(ads_filtered, 12)
+    page_number_string = request.GET.get('page')
+
+    try:
+        page_number = int(page_number_string)
+        if page_number <= 0:
+            ads = paginator.get_page(1)
+        elif page_number > paginator.num_pages:
+            ads = paginator.get_page(paginator.num_pages)
+        else:
+            ads = paginator.get_page(page_number_string)
+
+    except (TypeError, ValueError, KeyError):
+        ads = paginator.get_page(1)
+        return render(request, 'search_ads.html', {'ads': ads, 'query': query})
+
+    return render(request, 'search_ads.html', {'ads': ads, 'query': query})
 
 
 def ad_detail_view(request, ad_id):
