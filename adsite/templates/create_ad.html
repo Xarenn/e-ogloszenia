@@ -12,7 +12,7 @@
         {#        <input type="submit" class="btn btn-lg btn-success">#}
         {#      </form>#}
 
-        <form method="POST">
+      <form enctype="multipart/form-data" method="POST">
             {% csrf_token %}
             <p>
                 <label for="id_title">Title:</label>
