@@ -39,11 +39,9 @@ def home_view(request, *args, **kwargs):
     json_dict = request_get(api.GET_ADS + f'page={page}&size=12')
     if json_dict is None:
         return render(request, 'index.html', {'ads': None, 'details': None, 'search_categories': static_data.categories})
-
     total_pages = json_dict.json()['totalPages']
     if page > total_pages - 1:
         json_dict = request_get(api.GET_ADS + f'page={total_pages - 1}&size=12')
-
     ads = json_dict.json()['content']
     details = _get_details(json_dict.json())
     return render(request, 'index.html', {'ads': ads, 'details': details})
