@@ -1,4 +1,4 @@
-# e-ogloszenia TERMINY FUNKCJONALNOSCI PIENIADZE
+# e-ogloszenia 
 Django project e-ogloszenia
 
 ## PULL_REQUEST IMMEDIATELY AFTER FIRST COMMIT
